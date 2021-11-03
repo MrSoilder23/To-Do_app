@@ -1,4 +1,8 @@
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +22,14 @@ public class Main {
     JPanel guiPanel;
     JPanel todoPanel;
 
-    JTextPane todoTextPane;
+    JTextArea todoTextArea;
     JTextField textField;
+
+    JButton compButton;
+
+    Boolean isCompleted = false;
+
+    StyledDocument doc;
 
     public void run() {
         frame = new JFrame();
@@ -80,8 +90,9 @@ public class Main {
         JLabel secLabel = new JLabel("Completed");
 
         JButton toDoButton = new JButton();
+        compButton = new JButton();
 
-        todoTextPane = new JTextPane();
+        todoTextArea = new JTextArea();
 
         newFont = new Font("TimesRoman", Font.PLAIN | Font.BOLD, 20);
         todoFont = new Font("TimesRoman", Font.PLAIN | Font.BOLD, 15);
@@ -97,40 +108,54 @@ public class Main {
         guiPanel.add(listPanel);
         guiPanel.add(secListPanel);
 
+        // Top List
+
+        listPanel.setBounds(100, 0, 150, 40);
+        listPanel.add(firstLabel);
+        firstLabel.setSize(150, 0);
+        firstLabel.setFont(newFont);
+
+        secListPanel.setBounds(300, 0, 150, 40);
+        secListPanel.add(secLabel);
+        secLabel.setSize(150, 0);
+        secLabel.setFont(newFont);
+
+        // To Do card
+
         todoPanel.setSize(150, 200);
         todoPanel.setLayout(null);
         todoPanel.setLocation(100, 40);
         todoPanel.setBackground(Color.GRAY);
-        todoPanel.add(todoTextPane);
+        todoPanel.add(todoTextArea);
         todoPanel.add(toDoButton);
+        todoPanel.add(compButton);
 
-        listPanel.setBounds(100, 0, 150, 40);
-        listPanel.add(firstLabel);
+        todoTextArea.setFont(todoFont);
+        todoTextArea.setBounds(0, 0, 150, 170);
+        todoTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        todoTextArea.setEditable(false);
+        todoTextArea.setLineWrap(true);
+        todoTextArea.setWrapStyleWord(true);
 
-        secListPanel.setBounds(300, 0, 150, 40);
-        secListPanel.add(secLabel);
-
-        firstLabel.setSize(150, 0);
-        firstLabel.setFont(newFont);
-
-        secLabel.setSize(150, 0);
-        secLabel.setFont(newFont);
-
-        todoTextPane.setFont(todoFont);
-        todoTextPane.setBounds(0, 0, 150, 170);
-        todoTextPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        todoTextPane.setEditable(false);
-
-        toDoButton.setBounds(0, 170, 150, 30);
+        toDoButton.setBounds(0, 170, 110, 30);
         toDoButton.setBorderPainted(false);
         toDoButton.setFocusPainted(false);
+        toDoButton.setBackground(Color.BLUE);
         toDoButton.addActionListener(toDoListener);
 
+        compButton.setBounds(110, 170, 40, 30);
+        compButton.setBorderPainted(false);
+        compButton.setFocusPainted(false);
+        compButton.addActionListener(complete);
+        compButton.setBackground(Color.GREEN);
     }
 
     public void editText() {
         JFrame secJFrame = new JFrame();
         textField = new JTextField();
+        String oldText = todoTextArea.getText();
+
+        textField.setText(oldText);
 
         secJFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         secJFrame.setVisible(true);
@@ -146,6 +171,8 @@ public class Main {
         app.run();
         app.startMenu();
     }
+
+    // Action Listeners
 
     ActionListener al = new ActionListener() {
         @Override
@@ -165,12 +192,30 @@ public class Main {
         }
     };
 
+    ActionListener complete = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if (!isCompleted) {
+                todoPanel.setLocation(300, 40);
+                compButton.setBackground(Color.RED);
+
+                isCompleted = true;
+            } else {
+                todoPanel.setLocation(100, 40);
+                compButton.setBackground(Color.GREEN);
+
+                isCompleted = false;
+            }
+        }
+    };
+
     Action action = new AbstractAction()
     {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            todoTextPane.setText(textField.getText());
+            todoTextArea.setText(textField.getText());
         }
     };
 }
