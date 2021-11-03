@@ -19,6 +19,7 @@ public class Main {
     JPanel todoPanel;
 
     JTextPane todoTextPane;
+    JTextField textField;
 
     public void run() {
         frame = new JFrame();
@@ -78,6 +79,8 @@ public class Main {
         JLabel firstLabel = new JLabel("To-Do");
         JLabel secLabel = new JLabel("Completed");
 
+        JButton toDoButton = new JButton();
+
         todoTextPane = new JTextPane();
 
         newFont = new Font("TimesRoman", Font.PLAIN | Font.BOLD, 20);
@@ -99,6 +102,7 @@ public class Main {
         todoPanel.setLocation(100, 40);
         todoPanel.setBackground(Color.GRAY);
         todoPanel.add(todoTextPane);
+        todoPanel.add(toDoButton);
 
         listPanel.setBounds(100, 0, 150, 40);
         listPanel.add(firstLabel);
@@ -113,9 +117,28 @@ public class Main {
         secLabel.setFont(newFont);
 
         todoTextPane.setFont(todoFont);
-        todoTextPane.setBounds(0, 0, 150, 200);
+        todoTextPane.setBounds(0, 0, 150, 170);
         todoTextPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        todoTextPane.setEditable(false);
 
+        toDoButton.setBounds(0, 170, 150, 30);
+        toDoButton.setBorderPainted(false);
+        toDoButton.setFocusPainted(false);
+        toDoButton.addActionListener(toDoListener);
+
+    }
+
+    public void editText() {
+        JFrame secJFrame = new JFrame();
+        textField = new JTextField();
+
+        secJFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        secJFrame.setVisible(true);
+        secJFrame.setLocationRelativeTo(null);
+        secJFrame.add(textField);
+        secJFrame.setSize(100, 80);
+
+        textField.addActionListener(action);
     }
 
     public static void main(String[] args) {
@@ -132,6 +155,22 @@ public class Main {
             frame.repaint();
 
             app.GUI();
+        }
+    };
+
+    ActionListener toDoListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            app.editText();
+        }
+    };
+
+    Action action = new AbstractAction()
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            todoTextPane.setText(textField.getText());
         }
     };
 }
