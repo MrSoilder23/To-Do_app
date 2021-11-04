@@ -1,8 +1,4 @@
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,16 +16,20 @@ public class Main {
     JFrame frame;
     JPanel startPanel;
     JPanel guiPanel;
-    JPanel todoPanel;
+    JPanel[] todoPanel = new JPanel[100];
+    JPanel listPanel;
+    JPanel secListPanel;
 
-    JTextArea todoTextArea;
+    JTextArea[] todoTextArea  = new JTextArea[100];
     JTextField textField;
 
-    JButton compButton;
+    JButton[] compButton = new JButton[100];
+    JButton[] toDoButton = new JButton[100];
 
-    Boolean isCompleted = false;
+    Boolean[] isCompleted = new Boolean[100];
 
-    StyledDocument doc;
+    int amountOfLists = 0;
+    int clickedButton;
 
     public void run() {
         frame = new JFrame();
@@ -83,77 +83,105 @@ public class Main {
 
     }
 
+
+
+    public void toDoCard() {
+        todoPanel[amountOfLists] = new JPanel();
+        toDoButton[amountOfLists] = new JButton();
+        compButton[amountOfLists] = new JButton();
+        todoTextArea[amountOfLists] = new JTextArea();
+
+        todoPanel[amountOfLists].setMaximumSize(new Dimension(150, 200));
+        todoPanel[amountOfLists].setLayout(null);
+        todoPanel[amountOfLists].setBackground(Color.BLACK);
+        todoPanel[amountOfLists].add(todoTextArea[amountOfLists]);
+        todoPanel[amountOfLists].add(toDoButton[amountOfLists]);
+        todoPanel[amountOfLists].add(compButton[amountOfLists]);
+
+        todoTextArea[amountOfLists].setFont(todoFont);
+        todoTextArea[amountOfLists].setBounds(0, 0, 150, 170);
+        todoTextArea[amountOfLists].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        todoTextArea[amountOfLists].setEditable(false);
+        todoTextArea[amountOfLists].setLineWrap(true);
+        todoTextArea[amountOfLists].setWrapStyleWord(true);
+
+        toDoButton[amountOfLists].setBounds(0, 170, 110, 30);
+        toDoButton[amountOfLists].setBorderPainted(false);
+        toDoButton[amountOfLists].setFocusPainted(false);
+        toDoButton[amountOfLists].setBackground(Color.BLUE);
+        toDoButton[amountOfLists].addActionListener(toDoListener);
+        toDoButton[amountOfLists].setText(String.valueOf(amountOfLists));
+
+        compButton[amountOfLists].setBounds(110, 170, 40, 30);
+        compButton[amountOfLists].setBorderPainted(false);
+        compButton[amountOfLists].setFocusPainted(false);
+        compButton[amountOfLists].addActionListener(complete);
+        compButton[amountOfLists].setBackground(Color.GREEN);
+        compButton[amountOfLists].setText(String.valueOf(amountOfLists));
+    }
+
     public void GUI() {
-        JPanel listPanel = new JPanel();
-        JPanel secListPanel = new JPanel();
+        listPanel = new JPanel();
+        secListPanel = new JPanel();
+
+        JPanel panel = new JPanel();
+        JButton addNewCardButton = new JButton("ADD");
+
         JLabel firstLabel = new JLabel("To-Do");
         JLabel secLabel = new JLabel("Completed");
-
-        JButton toDoButton = new JButton();
-        compButton = new JButton();
-
-        todoTextArea = new JTextArea();
 
         newFont = new Font("TimesRoman", Font.PLAIN | Font.BOLD, 20);
         todoFont = new Font("TimesRoman", Font.PLAIN | Font.BOLD, 15);
 
-        todoPanel = new JPanel();
         guiPanel = new JPanel();
         frame.add(guiPanel);
+        frame.add(panel);
 
         guiPanel.setBackground(Color.WHITE);
-        guiPanel.setLayout(null);
-        guiPanel.setSize(windowSize);
-        guiPanel.add(todoPanel);
+        guiPanel.setLayout(new GridLayout(0, 5));
+        guiPanel.setSize(900, 550);
         guiPanel.add(listPanel);
         guiPanel.add(secListPanel);
 
         // Top List
 
-        listPanel.setBounds(100, 0, 150, 40);
+        //listPanel.setLocation(100, 0);
+        listPanel.setMinimumSize(new Dimension(150, 40));
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+        listPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        listPanel.setBackground(Color.GRAY);
         listPanel.add(firstLabel);
-        firstLabel.setSize(150, 0);
-        firstLabel.setFont(newFont);
 
-        secListPanel.setBounds(300, 0, 150, 40);
+        firstLabel.setSize(150, 40);
+        firstLabel.setFont(newFont);
+        firstLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        firstLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+        //secListPanel.setBounds(300, 0, 150, 40);
+        secListPanel.setLayout(new BoxLayout(secListPanel, BoxLayout.Y_AXIS));
+        secListPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        //secListPanel.setBackground(Color.GRAY);
         secListPanel.add(secLabel);
+
         secLabel.setSize(150, 0);
         secLabel.setFont(newFont);
+        secLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        secLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-        // To Do card
+        panel.setBounds(0, 550, 900, 100);
+        panel.setBackground(Color.WHITE);
+        panel.setLayout(null);
+        panel.add(addNewCardButton);
 
-        todoPanel.setSize(150, 200);
-        todoPanel.setLayout(null);
-        todoPanel.setLocation(100, 40);
-        todoPanel.setBackground(Color.GRAY);
-        todoPanel.add(todoTextArea);
-        todoPanel.add(toDoButton);
-        todoPanel.add(compButton);
-
-        todoTextArea.setFont(todoFont);
-        todoTextArea.setBounds(0, 0, 150, 170);
-        todoTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        todoTextArea.setEditable(false);
-        todoTextArea.setLineWrap(true);
-        todoTextArea.setWrapStyleWord(true);
-
-        toDoButton.setBounds(0, 170, 110, 30);
-        toDoButton.setBorderPainted(false);
-        toDoButton.setFocusPainted(false);
-        toDoButton.setBackground(Color.BLUE);
-        toDoButton.addActionListener(toDoListener);
-
-        compButton.setBounds(110, 170, 40, 30);
-        compButton.setBorderPainted(false);
-        compButton.setFocusPainted(false);
-        compButton.addActionListener(complete);
-        compButton.setBackground(Color.GREEN);
+        addNewCardButton.setBounds(10, 10, 100, 45);
+        addNewCardButton.setFocusPainted(false);
+        addNewCardButton.addActionListener(addNewToDo);
     }
 
     public void editText() {
         JFrame secJFrame = new JFrame();
         textField = new JTextField();
-        String oldText = todoTextArea.getText();
+        String oldText = todoTextArea[clickedButton].getText();
 
         textField.setText(oldText);
 
@@ -188,25 +216,55 @@ public class Main {
     ActionListener toDoListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            clickedButton = Integer.parseInt(e.getActionCommand());
             app.editText();
+
+            System.out.println(clickedButton);
         }
     };
 
     ActionListener complete = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            int i = Integer.parseInt(e.getActionCommand());
 
-            if (!isCompleted) {
-                todoPanel.setLocation(300, 40);
-                compButton.setBackground(Color.RED);
+            if (!isCompleted[i]) {
+                secListPanel.add(todoPanel[i]);
+                listPanel.remove(todoPanel[i]);
+                compButton[i].setBackground(Color.RED);
 
-                isCompleted = true;
+                frame.revalidate();
+                frame.repaint();
+
+                isCompleted[i] = true;
+                System.out.println(i);
+
             } else {
-                todoPanel.setLocation(100, 40);
-                compButton.setBackground(Color.GREEN);
+                listPanel.add(todoPanel[i]);
+                secListPanel.remove(todoPanel[i]);
+                compButton[i].setBackground(Color.GREEN);
 
-                isCompleted = false;
+                frame.revalidate();
+                frame.repaint();
+
+                isCompleted[i] = false;
+                System.out.println(i);
+
             }
+        }
+    };
+
+    ActionListener addNewToDo = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            amountOfLists++;
+            app.toDoCard();
+            listPanel.add(todoPanel[amountOfLists]);
+            isCompleted[amountOfLists] = false;
+
+            frame.revalidate();
+            frame.repaint();
+
         }
     };
 
@@ -215,7 +273,7 @@ public class Main {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            todoTextArea.setText(textField.getText());
+            todoTextArea[clickedButton].setText(textField.getText());
         }
     };
 }
